@@ -1,0 +1,25 @@
+### 사용자 1
+POST http://localhost:5000/api/create-user
+Content-Type: application/json
+
+{
+  "username": "전연모",
+  "password": "990999"
+}
+
+### 사용자 2
+POST http://localhost:5000/api/create-user
+Content-Type: application/json
+
+{
+  "username": "이민조",
+  "password": "030999"
+}
+
+### 사용자 삭제
+POST http://localhost:5000/api/delete-user
+Content-Type: application/json
+
+{
+  "username": "전연모"
+}
