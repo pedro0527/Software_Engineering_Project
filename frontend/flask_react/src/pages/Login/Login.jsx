@@ -6,27 +6,41 @@ import { useNavigate } from "react-router-dom";
 export const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    if (!username || !password) {
-      setIsError(true);
+    const trimmedUsername = username.trim();
+    const trimmedPassword = password.trim();
+
+    if (!trimmedUsername || !trimmedPassword) {
       setErrorMessage("이름과 비밀번호를 입력해주세요.");
       return;
     }
 
-    const res = await fetch("http://127.0.0.1:5000/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    });
+    try {
+      const res = await fetch("http://127.0.0.1:5000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: trimmedUsername,
+          password: trimmedPassword,
+        }),
+      });
 
-    const data = await res.json();
-    setErrorMessage(data.message);
+      const data = await res.json();
+
+      if (data.success) {
+        setErrorMessage("로그인 성공!");
+      } else {
+        setErrorMessage(data.message || "로그인 실패");
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMessage("서버 오류가 발생했습니다.");
+    }
   };
 
   const goSignUp = () => {
@@ -44,19 +58,25 @@ export const Login = () => {
           type="text"
           placeholder="이름"
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          $isError={isError && !username}
+          onChange={(e) => {
+            setUsername(e.target.value);
+            setErrorMessage("");
+          }}
+          $isError={!username && errorMessage}
         />
         <S.TitleInfo>비밀번호</S.TitleInfo>
         <S.InputBox
           type="password"
           placeholder="비밀번호"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          $isError={isError && !password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            setErrorMessage("");
+          }}
+          $isError={!password && errorMessage}
         />
         <div style={{ width: "100%", height: "30px" }}>
-          {isError && <S.ErrorMessage>{errorMessage}</S.ErrorMessage>}
+          {errorMessage && <S.ErrorMessage>{errorMessage}</S.ErrorMessage>}
         </div>
         <S.Btn onClick={handleLogin}>로그인</S.Btn>
         <S.SignUp>
