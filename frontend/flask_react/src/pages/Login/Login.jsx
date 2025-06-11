@@ -34,6 +34,7 @@ export const Login = () => {
 
       if (data.success) {
         setErrorMessage("로그인 성공!");
+        navigate("/reservation");
       } else {
         setErrorMessage(data.message || "로그인 실패");
       }
