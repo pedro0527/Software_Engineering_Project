@@ -15,11 +15,6 @@ export const Back = styled.div`
     display: flex;
     justify-content: flex-start;
     width: 100%;
-    margin: 20px 0;
-
-    img {
-
-    }
 `;
 
 export const SectionTitle = styled.div`

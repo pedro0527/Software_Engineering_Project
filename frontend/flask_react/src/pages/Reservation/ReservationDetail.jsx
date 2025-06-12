@@ -123,10 +123,10 @@ export const ReservationDetail = () => {
 };
 
 const CalendarContainer = styled.div`
-  margin-top: 2vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 65vh;
 
   .react-calendar {
     width: 100%;
