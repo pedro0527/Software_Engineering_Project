@@ -11,6 +11,13 @@ export const Wrapper = styled.section`
     padding: 16px;
 `;
 
+export const Back = styled.div`
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    cursor: pointer;
+`;
+
 export const Title = styled.div`
     font-size: 18px;
     font-weight: bold;
@@ -29,11 +36,11 @@ export const Container = styled.div`
 
     background-color: ${({ theme }) => theme.colors.gray01};
     border-radius: 10px;
-`
+`;
 
 export const Text = styled.div`
-    font-size: 15px;
-    font-weight: bold;
+    font-size: 16px;
+    margin: 5px 0;
 `;
 
 export const ConfirmButton = styled.button`

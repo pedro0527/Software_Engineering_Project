@@ -23,7 +23,7 @@ export const ReservationDetail = () => {
   const handleNext = () => {
     if (!isButtonDisabled) {
       navigate(
-        `/confirm/${id}?date=${moment(selectedDate).format(
+        `/person?tableId=${id}&date=${moment(selectedDate).format(
           "YYYY-MM-DD"
         )}&time=${activeTime}`
       );
@@ -67,13 +67,13 @@ export const ReservationDetail = () => {
         <S.TimeGroup>
           <S.TimeLabel>오전</S.TimeLabel>
           <S.TimeButton
-            active={activeTime === "오전 11시"}
+            active={activeTime === "오전 11시" ? "true" : undefined}
             onClick={() => setActiveTime("오전 11시")}
           >
             11:00
           </S.TimeButton>
           <S.TimeButton
-            active={activeTime === "오전 12시"}
+            active={activeTime === "오전 12시" ? "true" : undefined}
             onClick={() => setActiveTime("오전 12시")}
           >
             12:00
@@ -83,31 +83,31 @@ export const ReservationDetail = () => {
         <S.TimeGroup>
           <S.TimeLabel>오후</S.TimeLabel>
           <S.TimeButton
-            active={activeTime === "오후 1시"}
+            active={activeTime === "오후 1시" ? "true" : undefined}
             onClick={() => setActiveTime("오후 1시")}
           >
             13:00
           </S.TimeButton>
           <S.TimeButton
-            active={activeTime === "오후 2시"}
+            active={activeTime === "오후 2시" ? "true" : undefined}
             onClick={() => setActiveTime("오후 2시")}
           >
             14:00
           </S.TimeButton>
           <S.TimeButton
-            active={activeTime === "오후 5시"}
+            active={activeTime === "오후 5시" ? "true" : undefined}
             onClick={() => setActiveTime("오후 5시")}
           >
             17:00
           </S.TimeButton>
           <S.TimeButton
-            active={activeTime === "오후 6시"}
+            active={activeTime === "오후 6시" ? "true" : undefined}
             onClick={() => setActiveTime("오후 6시")}
           >
             18:00
           </S.TimeButton>
           <S.TimeButton
-            active={activeTime === "오후 7시"}
+            active={activeTime === "오후 7시" ? "true" : undefined}
             onClick={() => setActiveTime("오후 7시")}
           >
             19:00

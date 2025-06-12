@@ -1,10 +1,15 @@
 import * as S from "./ReservationPerson.styled";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import back from "../../assets/icons/back.svg";
 
 export const ReservationPerson = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const tableId = searchParams.get("tableId");
+  const date = searchParams.get("date");
+  const time = searchParams.get("time");
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [card, setCard] = useState("");
@@ -12,6 +17,14 @@ export const ReservationPerson = () => {
 
   const clickBack = () => {
     navigate(-1);
+  };
+
+  const handleNext = () => {
+    if (name && email && phone && card) {
+      navigate(
+        `/check?tableId=${tableId}&date=${date}&time=${time}&name=${name}&email=${email}&phone=${phone}&card=${card}`
+      );
+    }
   };
 
   return (
@@ -50,7 +63,12 @@ export const ReservationPerson = () => {
           onChange={(e) => setCard(e.target.value)}
         />
       </S.BtnWrapper>
-      <S.ConfirmButton>다음</S.ConfirmButton>
+      <S.ConfirmButton
+        disabled={!name || !email || !phone || !card}
+        onClick={handleNext}
+      >
+        다음
+      </S.ConfirmButton>
     </S.Wrapper>
   );
 };
