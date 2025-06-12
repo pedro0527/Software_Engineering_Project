@@ -5,6 +5,7 @@ import { Reservation } from "./pages/Reservation/Reservation";
 import { ReservationDetail } from "./pages/Reservation/ReservationDetail";
 import { ReservationPerson } from "./pages/Reservation/ReservationPerson";
 import { ReservationCheck } from "./pages/Reservation/ReservationCheck";
+import MyReservations from "./pages/MyReservations";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -13,4 +14,5 @@ export const router = createBrowserRouter([
   { path: "/reservation/:id", element: <ReservationDetail /> },
   { path: "/person", element: <ReservationPerson /> },
   { path: "/check", element: <ReservationCheck /> },
+  { path: "/my-reservations", element: <MyReservations /> },
 ]);

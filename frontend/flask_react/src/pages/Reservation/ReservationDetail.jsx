@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import moment from "moment";
@@ -13,12 +13,50 @@ export const ReservationDetail = () => {
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [activeTime, setActiveTime] = useState(null);
+  const [isReserved, setIsReserved] = useState(false);
+  const [reservedTimes, setReservedTimes] = useState([]);
 
   const handleDateChange = (newDate) => {
     setSelectedDate(newDate);
   };
 
-  const isButtonDisabled = !selectedDate || !activeTime;
+  // 예약된 시간 목록 받아오기
+  useEffect(() => {
+    const fetchReservedTimes = async () => {
+      if (!selectedDate) {
+        setReservedTimes([]);
+        return;
+      }
+      const res = await fetch(
+        `http://127.0.0.1:5000/api/reserved-times?date=${moment(
+          selectedDate
+        ).format("YYYY-MM-DD")}&table_id=${id}`
+      );
+      const data = await res.json();
+      setReservedTimes(data);
+    };
+    fetchReservedTimes();
+  }, [selectedDate, id]);
+
+  useEffect(() => {
+    // 날짜/시간/테이블이 바뀔 때마다 예약 여부 확인
+    const checkReserved = async () => {
+      if (!selectedDate || !activeTime) {
+        setIsReserved(false);
+        return;
+      }
+      const res = await fetch(
+        `http://127.0.0.1:5000/api/reserved-tables?date=${moment(
+          selectedDate
+        ).format("YYYY-MM-DD")}&time=${encodeURIComponent(activeTime)}`
+      );
+      const data = await res.json();
+      setIsReserved(data.includes(Number(id)));
+    };
+    checkReserved();
+  }, [selectedDate, activeTime, id]);
+
+  const isButtonDisabled = !selectedDate || !activeTime || isReserved;
 
   const handleNext = () => {
     if (!isButtonDisabled) {
@@ -33,6 +71,22 @@ export const ReservationDetail = () => {
   const clickBack = () => {
     navigate(-1);
   };
+
+  // 시간 버튼 렌더링 함수
+  const renderTimeButton = (label, timeStr) => (
+    <S.TimeButton
+      active={activeTime === timeStr ? "true" : undefined}
+      onClick={() => !reservedTimes.includes(timeStr) && setActiveTime(timeStr)}
+      disabled={reservedTimes.includes(timeStr)}
+      style={{
+        color: reservedTimes.includes(timeStr) ? "#9C9CA1" : undefined,
+        borderColor: reservedTimes.includes(timeStr) ? "#9C9CA1" : undefined,
+        cursor: reservedTimes.includes(timeStr) ? "not-allowed" : "pointer",
+      }}
+    >
+      {label}
+    </S.TimeButton>
+  );
 
   return (
     <S.Wrapper>
@@ -66,58 +120,28 @@ export const ReservationDetail = () => {
       <S.TimeContainer>
         <S.TimeGroup>
           <S.TimeLabel>오전</S.TimeLabel>
-          <S.TimeButton
-            active={activeTime === "오전 11시" ? "true" : undefined}
-            onClick={() => setActiveTime("오전 11시")}
-          >
-            11:00
-          </S.TimeButton>
-          <S.TimeButton
-            active={activeTime === "오전 12시" ? "true" : undefined}
-            onClick={() => setActiveTime("오전 12시")}
-          >
-            12:00
-          </S.TimeButton>
+          {renderTimeButton("11:00", "오전 11시")}
+          {renderTimeButton("12:00", "오전 12시")}
         </S.TimeGroup>
 
         <S.TimeGroup>
           <S.TimeLabel>오후</S.TimeLabel>
-          <S.TimeButton
-            active={activeTime === "오후 1시" ? "true" : undefined}
-            onClick={() => setActiveTime("오후 1시")}
-          >
-            13:00
-          </S.TimeButton>
-          <S.TimeButton
-            active={activeTime === "오후 2시" ? "true" : undefined}
-            onClick={() => setActiveTime("오후 2시")}
-          >
-            14:00
-          </S.TimeButton>
-          <S.TimeButton
-            active={activeTime === "오후 5시" ? "true" : undefined}
-            onClick={() => setActiveTime("오후 5시")}
-          >
-            17:00
-          </S.TimeButton>
-          <S.TimeButton
-            active={activeTime === "오후 6시" ? "true" : undefined}
-            onClick={() => setActiveTime("오후 6시")}
-          >
-            18:00
-          </S.TimeButton>
-          <S.TimeButton
-            active={activeTime === "오후 7시" ? "true" : undefined}
-            onClick={() => setActiveTime("오후 7시")}
-          >
-            19:00
-          </S.TimeButton>
+          {renderTimeButton("13:00", "오후 1시")}
+          {renderTimeButton("14:00", "오후 2시")}
+          {renderTimeButton("17:00", "오후 5시")}
+          {renderTimeButton("18:00", "오후 6시")}
+          {renderTimeButton("19:00", "오후 7시")}
         </S.TimeGroup>
       </S.TimeContainer>
 
       <S.ConfirmButton disabled={isButtonDisabled} onClick={handleNext}>
-        다음
+        {isReserved ? "이미 예약됨" : "다음"}
       </S.ConfirmButton>
+      {isReserved && (
+        <div style={{ color: "#9C9CA1", marginTop: 8, fontWeight: "bold" }}>
+          이 테이블은 해당 날짜/시간에 이미 예약되었습니다.
+        </div>
+      )}
     </S.Wrapper>
   );
 };

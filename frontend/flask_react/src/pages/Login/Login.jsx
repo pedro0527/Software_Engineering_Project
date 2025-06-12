@@ -33,6 +33,7 @@ export const Login = () => {
       const data = await res.json();
 
       if (data.success) {
+        localStorage.setItem("username", trimmedUsername);
         setErrorMessage("로그인 성공!");
         navigate("/reservation");
       } else {
