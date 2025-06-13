@@ -13,7 +13,7 @@ function SignUp() {
   const handleSignUp = async () => {
     if (!username || !password) {
       setIsError(true);
-      setErrorMessage("이름과 비밀번호를 입력해주세요.");
+      setErrorMessage("아이디와 비밀번호를 입력해주세요.");
       return;
     }
 
@@ -41,10 +41,10 @@ function SignUp() {
         <S.Logo src={Logo} alt="메인 로고" />
       </S.LogoWrapper>
       <S.BtnWrapper>
-        <S.TitleInfo>이름</S.TitleInfo>
+        <S.TitleInfo>아이디</S.TitleInfo>
         <S.InputBox
           type="text"
-          placeholder="이름"
+          placeholder="아이디"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           $isError={isError && !username}

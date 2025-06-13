@@ -10,6 +10,29 @@ export const Wrapper = styled.section`
     justify-content: end;
 `;
 
+export const TopBar = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 16px 24px 0 0;
+
+  span {
+    margin-right: 12px;
+    font-weight: bold;
+  }
+
+  button {
+    background: #ff6e3f;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 16px;
+    cursor: pointer;
+  }
+`;
+
+
 export const TableContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr); 

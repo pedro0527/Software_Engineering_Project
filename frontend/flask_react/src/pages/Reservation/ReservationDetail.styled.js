@@ -28,6 +28,7 @@ export const TimeContainer = styled.div`
     flex-direction: column;
     width: 100%;
     gap: 16px;
+    margin-top: 4%;
 `;
 
 export const TimeGroup = styled.div`
@@ -38,11 +39,15 @@ export const TimeGroup = styled.div`
 `;
 
 export const TimeLabel = styled.div`
-    min-width: 50px;
+    width: 10%;
     font-weight: bold;
 `;
 
 export const TimeButton = styled.button`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 15%;
     padding: 8px 14px;
     border: 1px solid ${({ active, theme }) => active ? theme.colors.mainColor : '#ccc'};
     background-color: ${({ active, theme }) => active ? theme.colors.mainColor : '#fff'};
@@ -58,7 +63,7 @@ export const TimeButton = styled.button`
 
 export const ConfirmButton = styled.button`
     width: 100%;
-    margin-top: 24px;
+    margin-top: 12%;
     padding: 10px 20px;
     background-color: ${({ disabled, theme }) => disabled ? '#ccc' : theme.colors.mainColor};
     color: white;
@@ -67,4 +72,17 @@ export const ConfirmButton = styled.button`
     border-radius: 6px;
 
     cursor: ${({ disabled }) => disabled ? 'not-allowed' : 'pointer'};
+`;
+
+export const ReservationCard = styled.div`
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 `;

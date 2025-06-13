@@ -12,7 +12,7 @@ export const Wrapper = styled.section`
 
 export const BtnWrapper = styled.div`
   width: 88%;
-  height: 70%;
+  height: 80%;
   display: flex;
   align-items: center;
   flex-direction: column;

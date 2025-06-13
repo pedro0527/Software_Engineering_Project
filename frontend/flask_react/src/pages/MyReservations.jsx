@@ -1,157 +1,176 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
+import * as S from "./Reservation/ReservationDetail.styled";
 
-export default function MyReservations() {
-  const [email, setEmail] = useState("");
+const MyReservations = () => {
   const [reservations, setReservations] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const email = localStorage.getItem("email");
+
+  useEffect(() => {
+    if (!email) {
+      setError("로그인이 필요합니다.");
+      navigate("/");
+      return;
+    }
+    fetchReservations();
+  }, [email, navigate]);
 
   const fetchReservations = async () => {
-    setLoading(true);
-    setError("");
     try {
-      const res = await fetch(
+      setLoading(true);
+      const response = await fetch(
         `http://127.0.0.1:5000/api/my-reservations?email=${email}`
       );
-      if (!res.ok) throw new Error("서버 오류");
-      const data = await res.json();
-      setReservations(data);
-    } catch {
-      setError("예약 내역을 불러오지 못했습니다.");
+      const data = await response.json();
+      if (data.success) {
+        setReservations(data.reservations);
+      } else {
+        setError(data.message);
+      }
+    } catch (error) {
+      setError("예약 내역을 불러오는 중 오류가 발생했습니다.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCancel = async (reservation) => {
-    if (!window.confirm("정말 예약을 취소하시겠습니까?")) return;
-    const res = await fetch("http://127.0.0.1:5000/api/delete-reservation", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        table_id: reservation.table_id,
-        date: reservation.date,
-        time: reservation.time,
-        email: email,
-      }),
-    });
-    const data = await res.json();
-    if (data.success) {
-      alert("예약이 취소되었습니다.");
-      setReservations((prev) =>
-        prev.filter(
-          (r) =>
-            !(
-              r.table_id === reservation.table_id &&
-              r.date === reservation.date &&
-              r.time === reservation.time
-            )
-        )
-      );
-    } else {
-      alert("취소 실패: " + data.message);
+  const handleCancel = async (reservationId) => {
+    if (!window.confirm("정말로 이 예약을 취소하시겠습니까?")) {
+      return;
     }
-  };
 
-  const handleLogout = () => {
-    localStorage.removeItem("username");
-    navigate("/");
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:5000/api/cancel-reservation",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: reservationId,
+            email: email,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        alert(data.message);
+        fetchReservations(); // 예약 목록 새로고침
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      alert("예약 취소 중 오류가 발생했습니다.");
+    }
   };
 
   const goMain = () => {
     navigate("/reservation");
   };
 
+  if (loading) {
+    return <S.Wrapper>로딩 중...</S.Wrapper>;
+  }
+
+  if (error) {
+    return <S.Wrapper>{error}</S.Wrapper>;
+  }
+
   return (
-    <div style={{ maxWidth: 540, margin: "0 auto", padding: 24 }}>
+    <S.Wrapper style={{ padding: 0 }}>
+      {/* 상단 고정 헤더: 높이 고정, 버튼 우측 5% 패딩 */}
       <div
         style={{
           width: "100%",
           display: "flex",
-          justifyContent: "flex-end",
-          marginBottom: 16,
+          alignItems: "center",
+          position: "sticky",
+          top: 0,
+          background: "#fff",
+          zIndex: 10,
+          padding: 0,
+          minHeight: 60,
+          height: 60,
         }}
       >
-        <button
-          onClick={goMain}
+        <div style={{ flex: 1 }} />
+        <S.SectionTitle style={{ margin: 0, textAlign: "center", flex: 1 }}>
+          내 예약 내역
+        </S.SectionTitle>
+        <div
           style={{
-            background: "#FF6E3F",
-            color: "#fff",
-            border: "none",
-            borderRadius: 8,
-            padding: "6px 16px",
-            cursor: "pointer",
+            flex: 1,
+            display: "flex",
+            justifyContent: "flex-end",
+            paddingRight: "5%",
           }}
         >
-          메인으로
-        </button>
+          <S.ConfirmButton
+            style={{
+              width: 80,
+              height: 32,
+              fontSize: 14,
+              padding: 0,
+              marginTop: 0,
+            }}
+            onClick={goMain}
+          >
+            메인으로
+          </S.ConfirmButton>
+        </div>
       </div>
-      <h2>나의 예약 확인</h2>
-      <input
-        type="email"
-        placeholder="이메일 입력"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={{ padding: 8, width: "70%", marginRight: 8 }}
-      />
-      <button onClick={fetchReservations} style={{ padding: 8 }}>
-        조회
-      </button>
-      <button
-        onClick={handleLogout}
+      {/* 예약 목록 스크롤 영역: 좌우 5% 패딩, 전체 marginTop 20px */}
+      <div
         style={{
-          padding: 8,
-          marginLeft: 8,
-          background: "#ccc",
-          borderRadius: 6,
-          cursor: "pointer",
+          width: "100%",
+          flex: 1,
+          overflowY: "auto",
+          padding: "0 5% 24px 5%",
+          marginTop: 20,
         }}
       >
-        로그아웃
-      </button>
-      {loading && <div>불러오는 중...</div>}
-      {error && <div style={{ color: "red" }}>{error}</div>}
-      <ul style={{ marginTop: 24 }}>
-        {reservations.length === 0 && !loading && (
-          <li>예약 내역이 없습니다.</li>
-        )}
-        {reservations.map((r, idx) => (
-          <li
-            key={idx}
+        {reservations.length === 0 ? (
+          <div
             style={{
-              marginBottom: 16,
-              background: "#eee",
-              padding: 12,
-              borderRadius: 8,
+              marginTop: 40,
+              color: "#9C9CA1",
+              fontWeight: "bold",
+              textAlign: "center",
             }}
           >
-            <div>
-              예약일: {r.date} {r.time}
-            </div>
-            <div>테이블 번호: {r.table_id}번</div>
-            <div>이름: {r.name}</div>
-            <div>전화번호: {r.phone}</div>
-            <div>카드번호: {r.card}</div>
-            <div>예약일시(등록): {r.created_at}</div>
-            <button
-              onClick={() => handleCancel(r)}
-              style={{
-                marginTop: 8,
-                background: "#FF6E3F",
-                color: "#fff",
-                border: "none",
-                borderRadius: 6,
-                padding: "6px 16px",
-                cursor: "pointer",
-              }}
-            >
-              예약 취소
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
+            예약 내역이 없습니다.
+          </div>
+        ) : (
+          reservations.map((reservation) => (
+            <S.ReservationCard key={reservation.id}>
+              <div>테이블 번호: {reservation.table_id}번</div>
+              <div>
+                예약 날짜: {moment(reservation.date).format("YYYY년 MM월 DD일")}
+              </div>
+              <div>예약 시간: {reservation.time}</div>
+              <div>인원 수: {reservation.guests}명</div>
+              <div>이름: {reservation.name}</div>
+              <div>이메일: {reservation.email}</div>
+              <div>전화번호: {reservation.phone}</div>
+              <div>카드번호: {reservation.card}</div>
+              <S.ConfirmButton
+                style={{ marginTop: 12 }}
+                onClick={() => handleCancel(reservation.id)}
+              >
+                예약 취소
+              </S.ConfirmButton>
+            </S.ReservationCard>
+          ))
+        )}
+      </div>
+    </S.Wrapper>
   );
-}
+};
+
+export default MyReservations;

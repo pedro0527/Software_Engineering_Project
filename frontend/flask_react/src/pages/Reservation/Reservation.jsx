@@ -39,53 +39,29 @@ export const Reservation = () => {
   };
 
   return (
-    <>
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          padding: "16px 24px 0 0",
-        }}
-      >
+    <S.Wrapper>
+      <S.TopBar>
         {username && (
           <>
-            <span style={{ marginRight: 12, fontWeight: "bold" }}>
-              {username} 님
-            </span>
-            <button
-              onClick={goMyPage}
-              style={{
-                background: "#FF6E3F",
-                color: "#fff",
-                border: "none",
-                borderRadius: 8,
-                padding: "6px 16px",
-                cursor: "pointer",
-              }}
-            >
-              마이페이지
-            </button>
+            <span>{username} 님</span>
+            <button onClick={goMyPage}>마이페이지</button>
           </>
         )}
-      </div>
-      <S.Wrapper>
-        <S.TableContainer>
-          {Array.from({ length: 6 }, (_, i) => (
-            <Table
-              key={i}
-              num={i + 1}
-              person={seatCounts[i]}
-              onClick={() => clickDetail(i + 1)}
-              disabled={reserved.includes(i + 1)}
-            />
-          ))}
-        </S.TableContainer>
-        <S.Door>
-          <span>입구</span>
-        </S.Door>
-      </S.Wrapper>
-    </>
+      </S.TopBar>
+      <S.TableContainer>
+        {Array.from({ length: 6 }, (_, i) => (
+          <Table
+            key={i}
+            num={i + 1}
+            person={seatCounts[i]}
+            onClick={() => clickDetail(i + 1)}
+            disabled={reserved.includes(i + 1)}
+          />
+        ))}
+      </S.TableContainer>
+      <S.Door>
+        <span>입구</span>
+      </S.Door>
+    </S.Wrapper>
   );
 };

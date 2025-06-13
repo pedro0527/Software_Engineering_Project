@@ -1,5 +1,5 @@
 import * as S from "./ReservationPerson.styled";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import back from "../../assets/icons/back.svg";
 
@@ -11,28 +11,51 @@ export const ReservationPerson = () => {
   const time = searchParams.get("time");
 
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [card, setCard] = useState("");
   const [phone, setPhone] = useState("");
+  const [guests, setGuests] = useState("");
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    const username = localStorage.getItem("username");
+    if (!username) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   const clickBack = () => {
     navigate(-1);
   };
 
   const handleNext = () => {
-    if (name && email && phone && card) {
+    if (name && phone && card && guests && email) {
       navigate(
-        `/check?tableId=${tableId}&date=${date}&time=${time}&name=${name}&email=${email}&phone=${phone}&card=${card}`
+        `/check?tableId=${tableId}&date=${date}&time=${time}&name=${name}&email=${email}&phone=${phone}&card=${card}&guests=${guests}`
       );
     }
   };
 
   return (
     <S.Wrapper>
-      <S.Back>
-        <img src={back} onClick={clickBack} />
-      </S.Back>
-      <S.SectionTitle>고객 정보</S.SectionTitle>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          width: "100%",
+          position: "relative",
+          marginBottom: 10,
+          marginLeft: 20,
+        }}
+      >
+        <div style={{ position: "absolute", left: 0 }}>
+          <S.Back style={{ marginBottom: 0, width: 40 }}>
+            <img src={back} onClick={clickBack} />
+          </S.Back>
+        </div>
+        <div style={{ flex: 1, textAlign: "center" }}>
+          <S.SectionTitle style={{ margin: 0 }}>고객 정보</S.SectionTitle>
+        </div>
+      </div>
       <S.BtnWrapper>
         <S.TitleInfo>이름</S.TitleInfo>
         <S.InputBox
@@ -46,7 +69,10 @@ export const ReservationPerson = () => {
           type="email"
           placeholder="이메일"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            localStorage.setItem("email", e.target.value);
+          }}
         />
         <S.TitleInfo>전화번호</S.TitleInfo>
         <S.InputBox
@@ -62,9 +88,16 @@ export const ReservationPerson = () => {
           value={card}
           onChange={(e) => setCard(e.target.value)}
         />
+        <S.TitleInfo>인원 수</S.TitleInfo>
+        <S.InputBox
+          type="text"
+          placeholder="인원 수"
+          value={guests}
+          onChange={(e) => setGuests(e.target.value)}
+        />
       </S.BtnWrapper>
       <S.ConfirmButton
-        disabled={!name || !email || !phone || !card}
+        disabled={!name || !phone || !card || !guests || !email}
         onClick={handleNext}
       >
         다음

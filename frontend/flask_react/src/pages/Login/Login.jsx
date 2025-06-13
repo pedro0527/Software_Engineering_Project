@@ -14,7 +14,7 @@ export const Login = () => {
     const trimmedPassword = password.trim();
 
     if (!trimmedUsername || !trimmedPassword) {
-      setErrorMessage("이름과 비밀번호를 입력해주세요.");
+      setErrorMessage("아이디와 비밀번호를 입력해주세요.");
       return;
     }
 
@@ -55,10 +55,10 @@ export const Login = () => {
         <S.Logo src={Logo} alt="메인 로고" />
       </S.LogoWrapper>
       <S.BtnWrapper>
-        <S.TitleInfo>이름</S.TitleInfo>
+        <S.TitleInfo>아이디</S.TitleInfo>
         <S.InputBox
           type="text"
-          placeholder="이름"
+          placeholder="아이디"
           value={username}
           onChange={(e) => {
             setUsername(e.target.value);
