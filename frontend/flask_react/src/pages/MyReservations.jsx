@@ -53,7 +53,7 @@ const MyReservations = () => {
           },
           body: JSON.stringify({
             id: reservationId,
-            email: email,
+            username: email,
           }),
         }
       );

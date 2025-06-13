@@ -20,6 +20,11 @@ export const ReservationCheck = () => {
 
   const formattedDate = moment(date).format("YYYY년 MM월 DD일");
 
+  // 예약 시간 표기 보정
+  let displayTime = time;
+  if (time === "오전 12시") displayTime = "오후 12시";
+  else if (time === "오후 12시") displayTime = "오전 12시";
+
   const clickBack = () => {
     navigate(-1);
   };
@@ -86,7 +91,7 @@ export const ReservationCheck = () => {
       <S.Container>
         <S.Text>테이블 번호: {tableId}번</S.Text>
         <S.Text>예약 날짜: {formattedDate}</S.Text>
-        <S.Text>예약 시간: {time}</S.Text>
+        <S.Text>예약 시간: {displayTime}</S.Text>
         <S.Text>인원 수: {guests}명</S.Text>
         <S.Text>이름: {name}</S.Text>
         <S.Text>전화번호: {phone}</S.Text>
